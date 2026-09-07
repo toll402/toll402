@@ -1,0 +1,21 @@
+{
+  "name": "toll402-mcp",
+  "version": "0.3.0",
+  "description": "MCP server for Toll402 (https://toll402.dev): every Toll402 tool as MCP tools, paid per call in USDC via x402. No accounts, no API keys.",
+  "type": "module",
+  "bin": { "toll402-mcp": "./dist/mcp.js" },
+  "files": ["dist", "README.md"],
+  "scripts": { "build": "tsc -p tsconfig.json", "prepublishOnly": "npm run build" },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@x402/evm": "~2.25.0",
+    "@x402/fetch": "~2.25.0",
+    "viem": "^2.56.3"
+  },
+  "devDependencies": { "@types/node": "^22", "typescript": "^5.7.0" },
+  "license": "MIT",
+  "homepage": "https://toll402.dev",
+  "repository": { "type": "git", "url": "https://gitlab.com/toll402/toll402-sdk" },
+  "keywords": ["mcp", "x402", "ai-agents", "usdc", "base", "tools", "toll402"]
+}

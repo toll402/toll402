@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "toll402"
+version = "0.1.0"
+description = "One-line client for Toll402 — pay-per-call tools for AI agents via x402 (USDC on Base). Free trial without a wallet; automatic payment with one."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Toll402" }]
+keywords = ["x402", "ai-agents", "tools", "usdc", "base", "langchain", "crewai"]
+dependencies = ["httpx>=0.25"]
+
+[project.optional-dependencies]
+pay = ["x402[requests,evm]>=2.20", "eth-account>=0.10", "requests>=2.31"]
+langchain = ["langchain-core>=0.2"]
+crewai = ["crewai>=0.30"]
+
+[project.urls]
+Homepage = "https://toll402.dev"
+Repository = "https://gitlab.com/toll402/toll402"
+Documentation = "https://toll402.dev/llms.txt"
+
+[tool.hatch.build.targets.wheel]
+packages = ["toll402"]

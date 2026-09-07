@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.json",
+  "name": "io.gitlab.toll402/toll402",
+  "description": "Pay-per-call tools for AI agents via x402 (USDC on Base): read/PDF/email/fx/provenance/trusted lookup/extract/judge, agent-forged tools, and proxied Bazaar services. No API keys.",
+  "repository": { "url": "https://gitlab.com/toll402/toll402-sdk", "source": "gitlab" },
+  "version_detail": { "version": "0.2.0" },
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "toll402",
+      "version": "0.2.0",
+      "runtime_hint": "npx",
+      "environment_variables": [
+        { "name": "TOLL402_URL", "description": "Gateway URL", "default": "https://toll402.dev" },
+        { "name": "TOLL402_WALLET_KEY", "description": "0x private key of a wallet holding USDC on Base (pays per call)", "is_secret": true, "is_required": true },
+        { "name": "TOLL402_MAX_USD", "description": "Max USD per single call", "default": "0.25" }
+      ]
+    }
+  ]
+}
