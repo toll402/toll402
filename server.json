@@ -1,37 +1,22 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "dev.toll402/toll402-mcp",
-  "description": "Pay-per-call tools for AI agents via x402 (USDC on Base): read/PDF/email/fx/provenance/trusted lookup/extract/judge, agent-forged tools, and proxied Bazaar services. No API keys.",
-  "repository": {
-    "url": "https://gitlab.com/toll402/toll402-sdk",
-    "source": "gitlab"
-  },
-  "version_detail": {
-    "version": "0.3.1"
-  },
+  "description": "Pay-per-call tools for AI agents via x402: web, PDF, provenance, trusted lookup, business directory.",
+  "version": "0.3.1",
+  "websiteUrl": "https://toll402.dev",
+  "repository": { "url": "https://gitlab.com/toll402/toll402-sdk", "source": "gitlab" },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "toll402-mcp",
+      "registryType": "npm",
+      "identifier": "toll402-mcp",
       "version": "0.3.1",
-      "runtime_hint": "npx",
-      "environment_variables": [
-        {
-          "name": "TOLL402_URL",
-          "description": "Gateway URL",
-          "default": "https://toll402.dev"
-        },
-        {
-          "name": "TOLL402_WALLET_KEY",
-          "description": "0x private key of a wallet holding USDC on Base (pays per call)",
-          "is_secret": true,
-          "is_required": true
-        },
-        {
-          "name": "TOLL402_MAX_USD",
-          "description": "Max USD per single call",
-          "default": "0.25"
-        }
+      "runtimeHint": "npx",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "TOLL402_WALLET_KEY", "description": "0x private key of a wallet holding USDC on Base (pays per call). Omit to use the free trial.", "isSecret": true, "isRequired": false },
+        { "name": "TOLL402_URL", "description": "Gateway URL", "default": "https://toll402.dev", "isRequired": false },
+        { "name": "TOLL402_MAX_USD", "description": "Max USD per single call", "default": "0.25", "isRequired": false },
+        { "name": "TOLL402_REF", "description": "Referrer wallet (0x) that earns a share of your calls", "isRequired": false }
       ]
     }
   ]
