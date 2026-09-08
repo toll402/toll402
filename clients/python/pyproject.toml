@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "toll402"
-version = "0.1.0"
+version = "0.1.1"
 description = "One-line client for Toll402 — pay-per-call tools for AI agents via x402 (USDC on Base). Free trial without a wallet; automatic payment with one."
 readme = "README.md"
 license = "MIT"

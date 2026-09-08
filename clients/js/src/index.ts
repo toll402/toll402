@@ -122,7 +122,7 @@ export class Toll402 {
 
   /** Free: ranked tools for a plain-language need. */
   async find(need: string, opts: { limit?: number; kinds?: ("builtin" | "forged" | "external")[] } = {}) {
-    const r = await this.f(`${this.baseUrl}/v1/find`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ need, ...opts }) });
+    const r = await this.f(`${this.baseUrl}/v1/find`, { method: "POST", headers: { "content-type": "application/json", "user-agent": "toll402-client/0.1.1" }, body: JSON.stringify({ need, ...opts }) });
     const j = (await r.json()) as { matches: (CatalogTool & { score: number })[]; forgeHint?: string };
     if (!r.ok) throw new Toll402Error(`find: HTTP ${r.status}`, r.status, "find_failed", undefined, j);
     return j;
@@ -132,7 +132,7 @@ export class Toll402 {
   /** Call any tool by catalog name ("read_url", "hn_top", …), id ("t/hn_top", "x/abc123") or path ("/v1/read"). Returns the tool's `result`. */
   async call<T = unknown>(tool: string, input: Record<string, unknown> = {}): Promise<T> {
     const path = await this.resolvePath(tool);
-    const r = await this.f(`${this.baseUrl}${path}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
+    const r = await this.f(`${this.baseUrl}${path}`, { method: "POST", headers: { "content-type": "application/json", "user-agent": "toll402-client/0.1.1" }, body: JSON.stringify(input) });
     const trial = r.headers.get("x-toll402-trial-remaining");
     this.trialRemaining = trial !== null ? Number(trial) : undefined;
     const pr = r.headers.get("payment-response") ?? r.headers.get("x-payment-response");

@@ -2,21 +2,45 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "dev.toll402/toll402-mcp",
   "description": "Pay-per-call tools for AI agents via x402: web, PDF, provenance, trusted lookup, business directory.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "websiteUrl": "https://toll402.dev",
-  "repository": { "url": "https://gitlab.com/toll402/toll402-sdk", "source": "gitlab" },
+  "repository": {
+    "url": "https://gitlab.com/toll402/toll402-sdk",
+    "source": "gitlab"
+  },
   "packages": [
     {
       "registryType": "npm",
       "identifier": "toll402-mcp",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "runtimeHint": "npx",
-      "transport": { "type": "stdio" },
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
-        { "name": "TOLL402_WALLET_KEY", "description": "0x private key of a wallet holding USDC on Base (pays per call). Omit to use the free trial.", "isSecret": true, "isRequired": false },
-        { "name": "TOLL402_URL", "description": "Gateway URL", "default": "https://toll402.dev", "isRequired": false },
-        { "name": "TOLL402_MAX_USD", "description": "Max USD per single call", "default": "0.25", "isRequired": false },
-        { "name": "TOLL402_REF", "description": "Referrer wallet (0x) that earns a share of your calls", "isRequired": false }
+        {
+          "name": "TOLL402_WALLET_KEY",
+          "description": "0x private key of a wallet holding USDC on Base (pays per call). Omit to use the free trial.",
+          "isSecret": true,
+          "isRequired": false
+        },
+        {
+          "name": "TOLL402_URL",
+          "description": "Gateway URL",
+          "default": "https://toll402.dev",
+          "isRequired": false
+        },
+        {
+          "name": "TOLL402_MAX_USD",
+          "description": "Max USD per single call",
+          "default": "0.25",
+          "isRequired": false
+        },
+        {
+          "name": "TOLL402_REF",
+          "description": "Referrer wallet (0x) that earns a share of your calls",
+          "isRequired": false
+        }
       ]
     }
   ]
