@@ -4,7 +4,7 @@
   "description": "MCP server for Toll402 (https://toll402.dev): every Toll402 tool as MCP tools, paid per call in USDC via x402. No accounts, no API keys.",
   "type": "module",
   "bin": {
-    "toll402-mcp": "./dist/mcp.js"
+    "toll402-mcp": "dist/mcp.js"
   },
   "files": [
     "dist",
@@ -31,7 +31,7 @@
   "homepage": "https://toll402.dev",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/toll402/toll402-sdk"
+    "url": "git+https://gitlab.com/toll402/toll402-sdk.git"
   },
   "keywords": [
     "mcp",
