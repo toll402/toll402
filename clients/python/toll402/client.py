@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Any, Optional
 
 import httpx
+UA = {"user-agent": "toll402-python/0.1.1"}
 
 DEFAULT_BASE = "https://toll402.dev"
 
@@ -35,7 +36,7 @@ class Toll402:
         self.trial_remaining: int | None = None
         self.address: str | None = None
         self._catalog: tuple[float, dict] | None = None
-        self._http = httpx.Client(timeout=timeout)
+        self._http = httpx.Client(timeout=timeout, headers=UA)
         self._paid = None
         if wallet_key:
             from ._x402 import paid_session
@@ -47,7 +48,7 @@ class Toll402:
     def _post(self, path: str, body: dict) -> _Resp:
         url = f"{self.base_url}{path}"
         if self._paid is not None:
-            r = self._paid.post(url, json=body, timeout=self.timeout)
+            r = self._paid.post(url, json=body, timeout=self.timeout, headers=UA)
             return _Resp(r.status_code, {k.lower(): v for k, v in r.headers.items()}, r.text)
         r = self._http.post(url, json=body)
         return _Resp(r.status_code, {k.lower(): v for k, v in r.headers.items()}, r.text)
