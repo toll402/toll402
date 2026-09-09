@@ -1,6 +1,6 @@
 {
   "name": "toll402-mcp",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "MCP server for Toll402 (https://toll402.dev): every Toll402 tool as MCP tools, paid per call in USDC via x402. No accounts, no API keys.",
   "type": "module",
   "bin": {

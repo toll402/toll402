@@ -1,14 +1,13 @@
 {
   "name": "toll402-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "One-line client for Toll402 \u2014 pay-per-call tools for AI agents via x402 (USDC on Base). Free trial without a wallet; automatic payment with one.",
   "type": "module",
   "license": "MIT",
   "homepage": "https://toll402.dev",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/toll402/toll402",
-    "directory": "clients/js"
+    "url": "git+https://github.com/toll402/toll402.git"
   },
   "keywords": [
     "x402",
