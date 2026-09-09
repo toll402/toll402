@@ -5,7 +5,7 @@
   "version": "0.3.2",
   "websiteUrl": "https://toll402.dev",
   "repository": {
-    "url": "https://gitlab.com/toll402/toll402-sdk",
+    "url": "https://github.com/toll402/toll402",
     "source": "gitlab"
   },
   "packages": [

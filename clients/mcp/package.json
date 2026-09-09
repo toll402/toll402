@@ -31,7 +31,7 @@
   "homepage": "https://toll402.dev",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/toll402/toll402-sdk.git"
+    "url": "git+https://github.com/toll402/toll402.git"
   },
   "keywords": [
     "mcp",
