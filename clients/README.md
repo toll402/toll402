@@ -34,3 +34,12 @@ POST https://toll402.dev/v1/listings   # basic $1 · featured $5 (top of results
 ```
 
 Listed services rank higher in `/v1/find` and the `/v1/do` router and appear in the catalog, `llms.txt`, the agent card and the landing. Charged only when verification passes. Current listings: `GET /v1/listings`.
+
+## Framework adapters (JS)
+```ts
+import { Toll402 } from "toll402-client";
+import { toll402Tools } from "toll402-client/langchain";          // LangChain DynamicStructuredTool[]
+import { toll402AiTools } from "toll402-client/ai";               // Vercel AI SDK tools
+import { toll402ActionProviders } from "toll402-client/agentkit"; // Coinbase AgentKit action providers
+import { toll402Plugin } from "toll402-client/eliza";             // ElizaOS plugin
+```

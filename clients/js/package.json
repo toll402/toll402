@@ -1,6 +1,6 @@
 {
   "name": "toll402-client",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "One-line client for Toll402 \u2014 pay-per-call tools for AI agents via x402 (USDC on Base). Free trial without a wallet; automatic payment with one.",
   "type": "module",
   "license": "MIT",
@@ -10,14 +10,17 @@
     "url": "git+https://github.com/toll402/toll402.git"
   },
   "keywords": [
-    "x402",
+    "agentkit",
     "ai-agents",
+    "base",
+    "coinbase-agentkit",
+    "elizaos",
+    "langchain",
+    "mcp",
     "tools",
     "usdc",
-    "base",
-    "langchain",
     "vercel-ai",
-    "mcp"
+    "x402"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -33,6 +36,14 @@
     "./ai": {
       "types": "./dist/ai.d.ts",
       "import": "./dist/ai.js"
+    },
+    "./agentkit": {
+      "types": "./dist/agentkit.d.ts",
+      "import": "./dist/agentkit.js"
+    },
+    "./eliza": {
+      "types": "./dist/eliza.d.ts",
+      "import": "./dist/eliza.js"
     }
   },
   "files": [
