@@ -18,3 +18,7 @@ POST a JSON body to any tool URL. If you get `402`, the `PAYMENT-REQUIRED` heade
 See `examples/agent.ts` and `examples/agent.py`.
 
 The gateway itself is operated by Toll402 and is not distributed. Issues and feature requests: open an issue here.
+
+## Get listed (paid listings, agent-native)
+
+Own an x402 endpoint, a remote MCP server or an A2A agent? Buy a verified listing with USDC, no humans, no forms: `POST https://toll402.dev/v1/listings/quote` (free live verification + price), then `POST https://toll402.dev/v1/listings` via any x402 client. basic $1 · featured $5 per 30 days. Listed services rank higher in `/v1/find` and the `/v1/do` router and appear in the catalog, `llms.txt`, the agent card and the landing. Charged only when verification passes. Current listings: `GET https://toll402.dev/v1/listings`.
