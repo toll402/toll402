@@ -1,6 +1,6 @@
 {
   "name": "toll402-client",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "One-line client for Toll402 \u2014 pay-per-call tools for AI agents via x402 (USDC on Base). Free trial without a wallet; automatic payment with one.",
   "type": "module",
   "license": "MIT",

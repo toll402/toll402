@@ -1,10 +1,11 @@
 ---
 name: toll402
-description: Pay-per-call tools for AI agents via x402 (USDC on Base) — read pages/PDFs, extract JSON, verify emails, FX rates, provenance (human vs synthetic), trusted-source lookup, verified business directory, forge new tools. No API keys; free trial without a wallet.
+description: Pay-per-call tools for AI agents via x402 (USDC on Base) — read pages/PDFs, extract JSON, verify emails, FX rates, provenance (human vs synthetic), trusted-source lookup, a 3.9M-business global directory, LatAm ID validators, forge new tools, 2,000+ proxied x402 services. No API keys; free trial without a wallet; 30% on-chain referral share.
 metadata:
-  version: 0.1.0
+  version: 1.0.0
   homepage: https://toll402.dev
   docs: https://toll402.dev/llms.txt
+  repository: https://github.com/toll402/toll402
 license: MIT
 ---
 
