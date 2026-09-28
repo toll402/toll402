@@ -2,7 +2,7 @@
 name: toll402
 description: 2,600+ pay-per-call tools for AI agents — read pages/PDFs, extract JSON, verify emails, FX rates, provenance (human vs synthetic), trusted-source lookup, a 4.6M-business verified directory, 50+ national ID validators, forge new tools, and provider APIs (SEO keyword/backlink data, social profiles and posts, people/company enrichment, ads, stocks and crypto, image/video generation). Pay per call with USDC via x402 (no account) or prepaid card credits (API key). Charged only on success.
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   homepage: https://toll402.dev
   docs: https://toll402.dev/llms.txt
   repository: https://github.com/toll402/toll402
@@ -30,7 +30,9 @@ license: MIT
 ## How to call (any language)
 1. Discover (free): `GET https://toll402.dev/v1/find?need=<what you need>` → ranked tools with `url`, `price`, `inputSchema`, `example`.
 2. Call: `POST <url>` with a JSON body (send `x-toll402-key` if you use credits). Success → `{ ok: true, result: {...} }`; the headers `x-toll402-charged` / `x-toll402-balance` show the debit and what is left.
-3. If the response is **402** without a key: pay with x402 and retry (the clients below do this automatically). With a key it means the balance is empty (`insufficient_credits`); ask the operator to top up. You are charged **only on 2xx**; errors are never settled.
+3. If the response is **402** without a key: pay with x402 and retry (the clients below do this automatically). With a key it means the balance is empty (`insufficient_credits`); ask the operator to top up. You are charged **only on 2xx**; errors are never settled. A `402 key_daily_cap` means this agent key hit the daily limit its operator set: stop and report, do not retry.
+4. **Image and video generation** answer `202` with `result.job.id` (credits only). Poll `GET https://toll402.dev/v1/jobs/<id>` with the same key (images every ~10 s, video every 30-60 s) until `succeeded` (`result.urls`, download promptly) or `failed` (refunded).
+5. **After you use an answer, rate it**: `POST https://toll402.dev/v1/calls/<x-toll402-call-id>/review {"useful": true|false, "reason": "one sentence"}`. It is free and moves tool ranking. Lost an answer you paid for? `GET /v1/calls/<id>` returns it for 24 h; `GET /v1/calls?days=1` lists your calls.
 
 ### JavaScript
 ```js
@@ -41,7 +43,9 @@ const page = await t.read("https://example.com");         // $0.002
 const biz  = await t.business.search({ city: "Ciudad de México", category: "dentist", minLevel: "corroborated", limit: 5 });
 const seo  = await t.call("moz.web.url.metrics", { targets: ["example.com"] });   // any provider endpoint by id
 const any  = await t.do("convert 100 usd to mxn", { base: "USD", quote: "MXN", amount: 100 });
-t.lastCharge;  // { usd, balanceUsd } after a credits-paid call
+t.lastCharge;  // { usd, balanceUsd, callId } after a credits-paid call
+await t.review(true, { reason: "accurate" });            // rate the last call
+const img = await t.generate("p/replicate.image-gen.flux-schnell", { input: { prompt: "a red kite" } }); // waits for the task
 ```
 ### Python
 ```python
