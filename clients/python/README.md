@@ -21,7 +21,14 @@ t.lookup("HTTP 402", sources=["wikipedia", "wikidata"])         # trusted source
 t.business.search(city="Ciudad de México", category="dentist", minLevel="corroborated")
 t.call("hn_top", {"n": 5})                                      # any catalog tool by name
 t.last_payment      # settlement of the last paid call (tx hash on Base)
-t.last_charge       # {'usd', 'balance_usd'} of the last credits-paid call
+t.last_charge       # {'usd', 'balance_usd', 'call_id'} of the last credits-paid call
+
+# credits key only
+t.review(True, reason="exact numbers")                          # rate the last call; moves ranking
+t.calls(days=7)                                                 # history, with stored answers (24 h)
+job = t.generate("p/replicate.image-gen.flux-schnell", {"input": {"prompt": "a red kite"}})  # async task, waits
+job["result"]["urls"]                                           # failed tasks are refunded
+t.create_key("research-bot", daily_cap_usd=2)                   # owner key: one key per agent
 ```
 
 Errors raise `Toll402Error` with `.status`, `.code` (`payment_required`, `invalid_input`, `tool_failed`, …) and `.price`. Charged only on 2xx.

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Any, Optional
 
 import httpx
-UA = {"user-agent": "toll402-python/0.2.0"}
+UA = {"user-agent": "toll402-python/0.3.0"}
 
 DEFAULT_BASE = "https://toll402.dev"
 
@@ -87,7 +87,8 @@ class Toll402:
         path = self._resolve(tool)
         r = self._post(path, input or {})
         charged = r.headers.get("x-toll402-charged")
-        self.last_charge = {"usd": float(charged), "balance_usd": float(r.headers.get("x-toll402-balance") or 0)} if charged is not None else None
+        cid = r.headers.get("x-toll402-call-id")
+        self.last_charge = {"usd": float(charged), "balance_usd": float(r.headers.get("x-toll402-balance") or 0), **({"call_id": int(cid)} if cid else {})} if charged is not None else None
         pr = r.headers.get("payment-response") or r.headers.get("x-payment-response")
         if pr:
             try:
@@ -105,6 +106,64 @@ class Toll402:
         if r.status >= 400 or body.get("ok") is False:
             raise Toll402Error(body.get("message", f"HTTP {r.status}"), r.status, body.get("error", "error"), details=body)
         return body.get("result")
+
+    # ---- account (credits key; free) -------------------------------------------
+    def _account(self, method: str, path: str, body: dict | None = None) -> dict:
+        if not self.api_key:
+            raise Toll402Error("This needs a prepaid-credits key (api_key).", 401, "api_key_required")
+        r = self._http.request(method, f"{self.base_url}{path}", json=body) if body is not None else self._http.request(method, f"{self.base_url}{path}")
+        try:
+            j = r.json()
+        except Exception:
+            j = {"raw": r.text}
+        if r.status_code >= 400:
+            raise Toll402Error(j.get("message", f"HTTP {r.status_code}"), r.status_code, j.get("error", "error"), details=j)
+        return j
+
+    def calls(self, days: int = 7, tool: str | None = None, key: str | None = None, limit: int = 50, before: int | None = None) -> dict:
+        """Paid calls of this key (the owner key sees every key), newest first."""
+        q = {k: v for k, v in {"days": days, "tool": tool, "key": key, "limit": limit, "before": before}.items() if v is not None}
+        return self._account("GET", "/v1/calls?" + "&".join(f"{k}={v}" for k, v in q.items()))
+
+    def get_call(self, call_id: int) -> dict:
+        """One paid call with its stored answer (kept 24 h)."""
+        return self._account("GET", f"/v1/calls/{call_id}")["call"]
+
+    def review(self, useful: bool, call_id: int | None = None, reason: str | None = None) -> dict:
+        """Rate a paid call after using it (defaults to the last charged call); reviews move tool ranking."""
+        cid = call_id or (self.last_charge or {}).get("call_id")
+        if not cid:
+            raise Toll402Error("No call id: pass call_id, or review right after a credits call.", 400, "no_call_id")
+        return self._account("POST", f"/v1/calls/{cid}/review", {"useful": useful, "reason": reason})
+
+    def job(self, job_id: str) -> dict:
+        """Status of an async generation task (image/video)."""
+        return self._account("GET", f"/v1/jobs/{job_id}")["job"]
+
+    def generate(self, tool: str, input: dict, timeout_s: float = 600, interval_s: float | None = None) -> dict:
+        """Submit a generation task and wait for it. Returns the finished job; raises if it failed (credits are refunded)."""
+        r = self.call(tool, input)
+        deadline = time.time() + timeout_s
+        while True:
+            j = self.job(r["job"]["id"])
+            if j["status"] == "succeeded":
+                return j
+            if j["status"] == "failed":
+                raise Toll402Error(f"Task failed: {j.get('error')} (credits refunded)", 502, "task_failed", details=j)
+            if time.time() > deadline:
+                raise Toll402Error(f"Task {j['id']} still running; check later with job()", 504, "task_pending", details=j)
+            time.sleep(interval_s or max(5, j.get("checkAgainInSec", 15)))
+
+    def create_key(self, name: str, daily_cap_usd: float | None = None) -> dict:
+        """Create an agent key (owner key only). The key value is returned once."""
+        return self._account("POST", "/v1/keys", {"name": name, **({"dailyCapUsd": daily_cap_usd} if daily_cap_usd else {})})
+
+    def list_keys(self) -> list:
+        return self._account("GET", "/v1/keys")["keys"]
+
+    def update_key(self, key_id: str, **patch: Any) -> dict:
+        """patch: name, dailyCapUsd (None removes the cap), disabled."""
+        return self._account("PATCH", f"/v1/keys/{key_id}", patch)["key"]
 
     def do(self, need: str, input: dict, max_price_usd: float | None = None, tool: str | None = None) -> dict:
         body: dict = {"need": need, "input": input}

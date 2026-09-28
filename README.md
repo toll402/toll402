@@ -64,6 +64,8 @@ Remote, no install (send `x-toll402-key` or x402 headers on the connection; `?ke
 ## Paying, in one paragraph
 Two rails. **Credits**: the operator buys a balance by card at https://toll402.dev/credits and the agent sends the key as the `x-toll402-key` header; each 2xx response reports `x-toll402-charged` and `x-toll402-balance`, and `GET /v1/account` lists every debit. **x402**: POST a JSON body to any tool URL; if you get `402`, the `PAYMENT-REQUIRED` header (base64 JSON) says the price in USDC on Base (`eip155:8453`) and the pay-to address; sign an EIP-3009 `transferWithAuthorization` for that amount and retry with a `PAYMENT-SIGNATURE` header. Either way you are charged only when the call returns 2xx.
 
+**With a credits key you also get:** one key per agent with a daily cap (`POST /v1/keys`, owner key), call history with the stored answers for 24 h (`GET /v1/calls`), reviews that move tool ranking (`POST /v1/calls/<id>/review`), image and video generation as async tasks refunded if they fail (`202` + `GET /v1/jobs/<id>`), and optional automatic top-up. Over MCP: `toll402_review`, `toll402_job`, `toll402_history`.
+
 ## Examples
 See `examples/agent.ts` and `examples/agent.py`.
 
@@ -78,7 +80,7 @@ The gateway itself is operated by Toll402 and is not distributed. Issues and fea
 
 ## Tools
 
-16 first-party tools, 167 community-forged tools and 2,466 provider API endpoints, all exposed as MCP tools (the provider endpoints through `find` and `do`). Prices are per call; charged only on success.
+16 first-party tools, 167 community-forged tools and 2,496 provider API endpoints (including image and video generation), all exposed as MCP tools (the provider endpoints through `find` and `do`). Prices are per call; charged only on success.
 
 ### First-party
 

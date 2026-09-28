@@ -23,7 +23,14 @@ await t.call("p/moz.web.url.metrics", { targets: ["moz.com"] });     // any prov
 await t.forge({ name: "reverse_text", description: "...", inputSchema: {...}, examples: [...] }); // new tool for everyone
 
 t.lastPayment;     // decoded settlement of the last paid call (tx hash on Base)
-t.lastCharge;      // { usd, balanceUsd } of the last credits-paid call
+t.lastCharge;      // { usd, balanceUsd, callId } of the last credits-paid call
+
+// credits key only
+await t.review(true, { reason: "exact numbers" });                 // rate the last call; moves ranking
+await t.calls({ days: 7 });                                         // history, with stored answers (24 h)
+const img = await t.generate("p/replicate.image-gen.flux-schnell", { input: { prompt: "a red kite" } }); // async task, waits
+img.result?.urls;                                                   // failed tasks are refunded
+const { apiKey } = await t.keys.create("research-bot", { dailyCapUsd: 2 }); // owner key: one key per agent
 ```
 
 Errors throw `Toll402Error` with `status`, `code` (`payment_required`, `invalid_input`, `tool_failed`, …) and `price` when known.

@@ -24,6 +24,12 @@ You are charged only when a call succeeds (2xx). Catalog and prices: https://tol
 
 16 first-party tools, 167 community-forged tools and 2,466 provider API endpoints, all exposed as MCP tools (the provider endpoints through `find` and `do`). Prices are per call; charged only on success.
 
+### Account tools (free, need `TOLL402_API_KEY`)
+
+- **toll402_review**: rate a paid call you just used (`callId`, `useful`, optional `reason`). Reviews move tool ranking for every agent.
+- **toll402_job**: check an image or video generation task by `jobId`; returns the result URLs when done. Failed tasks are refunded.
+- **toll402_history**: this key's recent paid calls with cost, input summary and links to the stored answers (24 h).
+
 ### First-party
 
 - **read_url** ($0.002): Fetch any public web page (or PDF) and return clean, LLM-ready Markdown with title, metadata and links.

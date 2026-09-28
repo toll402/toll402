@@ -95,7 +95,7 @@ export class Toll402 {
   /** Decoded PAYMENT-RESPONSE of the last x402-paid call. */
   lastPayment?: PaymentInfo;
   /** Last credits debit: what the call cost and the balance left (undefined for x402 calls). */
-  lastCharge?: { usd: number; balanceUsd: number };
+  lastCharge?: { usd: number; balanceUsd: number; callId?: number };
   /** @deprecated The free trial no longer exists; always undefined. */
   trialRemaining?: number;
   private readonly apiKey?: string;
@@ -119,7 +119,7 @@ export class Toll402 {
   }
 
   private headers(): Record<string, string> {
-    return { "content-type": "application/json", "user-agent": "toll402-client/0.3.0", ...(this.apiKey ? { "x-toll402-key": this.apiKey } : {}) };
+    return { "content-type": "application/json", "user-agent": "toll402-client/0.4.0", ...(this.apiKey ? { "x-toll402-key": this.apiKey } : {}) };
   }
 
   // ---- discovery (free) ------------------------------------------------------
@@ -146,7 +146,8 @@ export class Toll402 {
     const path = await this.resolvePath(tool);
     const r = await this.f(`${this.baseUrl}${path}`, { method: "POST", headers: this.headers(), body: JSON.stringify(input) });
     const charged = r.headers.get("x-toll402-charged");
-    this.lastCharge = charged !== null ? { usd: Number(charged), balanceUsd: Number(r.headers.get("x-toll402-balance") ?? "0") } : undefined;
+    const callId = r.headers.get("x-toll402-call-id");
+    this.lastCharge = charged !== null ? { usd: Number(charged), balanceUsd: Number(r.headers.get("x-toll402-balance") ?? "0"), ...(callId ? { callId: Number(callId) } : {}) } : undefined;
     const pr = r.headers.get("payment-response") ?? r.headers.get("x-payment-response");
     if (pr) {
       try {
@@ -225,6 +226,50 @@ export class Toll402 {
       if (!r.ok) throw new Toll402Error(`business ${id}: HTTP ${r.status}`, r.status, "not_found");
       return r.json() as Promise<Record<string, unknown>>;
     },
+  };
+
+  // ---- account (credits key; free) -------------------------------------------
+  private async account<T>(method: string, path: string, body?: unknown): Promise<T> {
+    if (!this.apiKey) throw new Toll402Error("This needs a prepaid-credits key (apiKey).", 401, "api_key_required");
+    const r = await this.f(`${this.baseUrl}${path}`, { method, headers: this.headers(), ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
+    const j = (await r.json().catch(() => ({}))) as Record<string, unknown>;
+    if (!r.ok) throw new Toll402Error((j.message as string) ?? `HTTP ${r.status}`, r.status, (j.error as string) ?? "error", undefined, j);
+    return j as T;
+  }
+  /** Paid calls of this key (the owner key sees every key), newest first. */
+  calls(opts: { days?: number; tool?: string; key?: string; limit?: number; before?: number } = {}) {
+    const q = new URLSearchParams(Object.entries(opts).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)]));
+    return this.account<{ total: { calls: number; usd: number }; calls: { callId: number; at: string; tool: string; usd: number; detail: string | null; key: string | null; result: string | null }[]; nextBefore: number | null }>("GET", `/v1/calls?${q}`);
+  }
+  /** One paid call with its stored answer (kept 24 h). */
+  getCall(callId: number) { return this.account<{ call: Record<string, unknown> }>("GET", `/v1/calls/${callId}`).then((j) => j.call); }
+  /** Rate a paid call after using it; reviews move tool ranking for everyone. Defaults to the last charged call. */
+  review(useful: boolean, opts: { callId?: number; reason?: string } = {}) {
+    const id = opts.callId ?? this.lastCharge?.callId;
+    if (!id) throw new Toll402Error("No call id: pass callId, or review right after a credits call.", 400, "no_call_id");
+    return this.account<{ ok: boolean }>("POST", `/v1/calls/${id}/review`, { useful, reason: opts.reason });
+  }
+  /** Async generation task (image/video) status. */
+  job(id: string) { return this.account<{ job: { id: string; status: "pending" | "succeeded" | "failed"; result?: { urls?: string[]; output?: unknown }; error?: string; checkAgainInSec?: number } }>("GET", `/v1/jobs/${encodeURIComponent(id)}`).then((j) => j.job); }
+  /** Submit a generation task and wait for it. Returns the finished job (throws if it failed; the credits are refunded). */
+  async generate(tool: string, input: Record<string, unknown>, opts: { timeoutMs?: number; intervalMs?: number } = {}) {
+    const r = await this.call<{ job: { id: string } }>(tool, input);
+    const deadline = Date.now() + (opts.timeoutMs ?? 10 * 60_000);
+    for (;;) {
+      const j = await this.job(r.job.id);
+      if (j.status === "succeeded") return j;
+      if (j.status === "failed") throw new Toll402Error(`Task failed: ${j.error ?? "unknown"} (credits refunded)`, 502, "task_failed", undefined, j);
+      if (Date.now() > deadline) throw new Toll402Error(`Task ${j.id} still running; check later with job()`, 504, "task_pending", undefined, j);
+      await new Promise((res) => setTimeout(res, opts.intervalMs ?? Math.max(5, j.checkAgainInSec ?? 15) * 1000));
+    }
+  }
+  /** Agent keys (owner key only). */
+  readonly keys = {
+    list: () => this.account<{ keys: unknown[] }>("GET", "/v1/keys").then((j) => j.keys),
+    create: (name: string, opts: { dailyCapUsd?: number } = {}) => this.account<{ apiKey: string; key: Record<string, unknown> }>("POST", "/v1/keys", { name, ...opts }),
+    update: (id: string, patch: { name?: string; dailyCapUsd?: number | null; disabled?: boolean }) => this.account<{ key: Record<string, unknown> }>("PATCH", `/v1/keys/${encodeURIComponent(id)}`, patch),
+    rotate: (id: string) => this.account<{ apiKey: string }>("POST", `/v1/keys/${encodeURIComponent(id)}/rotate`),
+    remove: (id: string) => this.account<{ ok: boolean }>("DELETE", `/v1/keys/${encodeURIComponent(id)}`),
   };
 
   private async resolvePath(tool: string): Promise<string> {
