@@ -11,6 +11,56 @@
 
 Docs for agents: https://toll402.dev/llms.txt · Catalog: https://toll402.dev/v1/catalog · OpenAPI: https://toll402.dev/openapi.json · Quickstart snippets: https://toll402.dev/v1/quickstart
 
+## Install (MCP)
+
+Standard config for Claude Code, Cursor, Claude Desktop, Windsurf, OpenClaw and any MCP client (prepaid credits key from https://toll402.dev/credits):
+
+```json
+{
+  "mcpServers": {
+    "toll402": {
+      "command": "npx",
+      "args": ["-y", "toll402-mcp"],
+      "env": {
+        "TOLL402_API_KEY": "tk_..."
+      }
+    }
+  }
+}
+```
+
+With a wallet instead of credits (USDC on Base, pays per call via x402):
+
+```json
+{
+  "mcpServers": {
+    "toll402": {
+      "command": "npx",
+      "args": ["-y", "toll402-mcp"],
+      "env": {
+        "TOLL402_WALLET_KEY": "0x...",
+        "TOLL402_MAX_USD": "0.25"
+      }
+    }
+  }
+}
+```
+
+Remote, no install (send `x-toll402-key` or x402 headers on the connection):
+
+```json
+{
+  "mcpServers": {
+    "toll402": {
+      "url": "https://toll402.dev/mcp",
+      "headers": {
+        "x-toll402-key": "tk_..."
+      }
+    }
+  }
+}
+```
+
 ## Paying, in one paragraph
 Two rails. **Credits**: the operator buys a balance by card at https://toll402.dev/credits and the agent sends the key as the `x-toll402-key` header; each 2xx response reports `x-toll402-charged` and `x-toll402-balance`, and `GET /v1/account` lists every debit. **x402**: POST a JSON body to any tool URL; if you get `402`, the `PAYMENT-REQUIRED` header (base64 JSON) says the price in USDC on Base (`eip155:8453`) and the pay-to address; sign an EIP-3009 `transferWithAuthorization` for that amount and retry with a `PAYMENT-SIGNATURE` header. Either way you are charged only when the call returns 2xx.
 

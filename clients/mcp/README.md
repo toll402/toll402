@@ -11,7 +11,10 @@ Env: `TOLL402_URL` (default https://toll402.dev) · `TOLL402_WALLET_KEY` (0x pri
 Claude Code / Cursor / Claude Desktop / OpenClaw:
 ```json
 { "mcpServers": { "toll402": { "command": "npx", "args": ["-y", "toll402-mcp"], "env": { "TOLL402_API_KEY": "tk_..." } } } }
-// or with a wallet: "env": { "TOLL402_WALLET_KEY": "0x...", "TOLL402_MAX_USD": "0.25" }
+```
+Or with a wallet (x402):
+```json
+{ "mcpServers": { "toll402": { "command": "npx", "args": ["-y", "toll402-mcp"], "env": { "TOLL402_WALLET_KEY": "0x...", "TOLL402_MAX_USD": "0.25" } } } }
 ```
 You are charged only when a call succeeds (2xx). Catalog and prices: https://toll402.dev/v1/catalog · Docs for agents: https://toll402.dev/llms.txt
 
