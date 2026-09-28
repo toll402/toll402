@@ -59,7 +59,7 @@ curl -i -X POST https://toll402.dev/v1/read -H 'content-type: application/json' 
 ```json
 { "mcpServers": { "toll402": { "command": "npx", "args": ["-y", "toll402-mcp"], "env": { "TOLL402_API_KEY": "tk_..." } } } }
 ```
-Remote, no install: `https://toll402.dev/mcp` (send `x-toll402-key` as a header).
+Remote, no install: `https://toll402.dev/mcp` (send `x-toll402-key` as a header, or `?key=tk_…` in the URL when headers are impossible). Operators manage balance and activity at https://toll402.dev/account.
 
 ## Tool groups and prices (USD per call)
 | Group | Tools | Price |

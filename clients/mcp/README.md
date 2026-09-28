@@ -16,6 +16,8 @@ Or with a wallet (x402):
 ```json
 { "mcpServers": { "toll402": { "command": "npx", "args": ["-y", "toll402-mcp"], "env": { "TOLL402_WALLET_KEY": "0x...", "TOLL402_MAX_USD": "0.25" } } } }
 ```
+Remote, no install: `https://toll402.dev/mcp` (send `x-toll402-key` as a header, `?key=tk_…` in the URL for clients without headers, or x402 headers). Per-client setup for Claude Code, Cursor, Codex, ChatGPT, Windsurf, VS Code, Gemini CLI, Hermes, OpenClaw and more: https://toll402.dev/#connect
+
 You are charged only when a call succeeds (2xx). Catalog and prices: https://toll402.dev/v1/catalog · Docs for agents: https://toll402.dev/llms.txt
 
 ## Tools

@@ -46,7 +46,7 @@ With a wallet instead of credits (USDC on Base, pays per call via x402):
 }
 ```
 
-Remote, no install (send `x-toll402-key` or x402 headers on the connection):
+Remote, no install (send `x-toll402-key` or x402 headers on the connection; `?key=tk_…` in the URL for clients that cannot set headers):
 
 ```json
 {

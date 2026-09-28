@@ -1,6 +1,6 @@
 {
   "name": "toll402-mcp",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "MCP server for Toll402: 2,600+ pay-per-call tools for AI agents (web, PDF, provenance, verified business directory, ID validators, SEO/social/enrichment/ads/market-data provider APIs). Pay per call with USDC via x402 (no account) or with prepaid credits bought by card (API key). Charged only on success.",
   "type": "module",
   "bin": {

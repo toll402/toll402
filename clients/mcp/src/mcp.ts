@@ -59,7 +59,7 @@ async function main() {
     if (!t) return { isError: true, content: [{ type: "text", text: `Unknown tool ${req.params.name}` }] };
     const r = await paidFetch(`${BASE}${t.path}`, {
       method: "POST",
-      headers: { "content-type": "application/json", "user-agent": "toll402-mcp/0.4.1", ...(API_KEY ? { "x-toll402-key": API_KEY } : {}), ...(process.env.TOLL402_REF ? { "x-toll402-ref": process.env.TOLL402_REF } : {}), ...(KEY ? { "x-toll402-agent": privateKeyToAccount(KEY).address } : {}) },
+      headers: { "content-type": "application/json", "user-agent": "toll402-mcp/0.4.2", ...(API_KEY ? { "x-toll402-key": API_KEY } : {}), ...(process.env.TOLL402_REF ? { "x-toll402-ref": process.env.TOLL402_REF } : {}), ...(KEY ? { "x-toll402-agent": privateKeyToAccount(KEY).address } : {}) },
       body: JSON.stringify(req.params.arguments ?? {}),
     });
     const text = await r.text();
