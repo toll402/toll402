@@ -1,13 +1,14 @@
-"""Sync client for Toll402. Without a wallet you get the free trial (cheap tools, per-IP quota); with one, calls pay themselves."""
+"""Sync client for Toll402. Pay per call from a wallet (x402, USDC on Base) or from prepaid credits (api_key, bought by card at https://toll402.dev/credits)."""
 from __future__ import annotations
 
 import json
+import re
 import time
 from dataclasses import dataclass
 from typing import Any, Optional
 
 import httpx
-UA = {"user-agent": "toll402-python/0.1.1"}
+UA = {"user-agent": "toll402-python/0.2.0"}
 
 DEFAULT_BASE = "https://toll402.dev"
 
@@ -29,14 +30,17 @@ class _Resp:
 
 
 class Toll402:
-    def __init__(self, wallet_key: Optional[str] = None, base_url: str = DEFAULT_BASE, max_usd_per_call: float = 0.25, network: str = "eip155:8453", timeout: float = 120.0):
+    def __init__(self, wallet_key: Optional[str] = None, base_url: str = DEFAULT_BASE, max_usd_per_call: float = 0.25, network: str = "eip155:8453", timeout: float = 120.0, api_key: Optional[str] = None):
+        """wallet_key: 0x private key with USDC on Base (x402). api_key: prepaid-credits key tk_… (header x-toll402-key). Use one of the two."""
         self.base_url = base_url.rstrip("/")
+        self.api_key = api_key
+        self.last_charge: dict | None = None
         self.timeout = timeout
         self.last_payment: dict | None = None
         self.trial_remaining: int | None = None
         self.address: str | None = None
         self._catalog: tuple[float, dict] | None = None
-        self._http = httpx.Client(timeout=timeout, headers=UA)
+        self._http = httpx.Client(timeout=timeout, headers={**UA, **({"x-toll402-key": api_key} if api_key else {})})
         self._paid = None
         if wallet_key:
             from ._x402 import paid_session
@@ -48,7 +52,7 @@ class Toll402:
     def _post(self, path: str, body: dict) -> _Resp:
         url = f"{self.base_url}{path}"
         if self._paid is not None:
-            r = self._paid.post(url, json=body, timeout=self.timeout, headers=UA)
+            r = self._paid.post(url, json=body, timeout=self.timeout, headers={**UA, **({"x-toll402-key": self.api_key} if self.api_key else {})})
             return _Resp(r.status_code, {k.lower(): v for k, v in r.headers.items()}, r.text)
         r = self._http.post(url, json=body)
         return _Resp(r.status_code, {k.lower(): v for k, v in r.headers.items()}, r.text)
@@ -82,8 +86,8 @@ class Toll402:
         """Call any tool by catalog name ('read_url', 'hn_top'), id ('t/hn_top', 'x/abc'), or path ('/v1/read'). Returns its `result`."""
         path = self._resolve(tool)
         r = self._post(path, input or {})
-        tr = r.headers.get("x-toll402-trial-remaining")
-        self.trial_remaining = int(tr) if tr is not None else None
+        charged = r.headers.get("x-toll402-charged")
+        self.last_charge = {"usd": float(charged), "balance_usd": float(r.headers.get("x-toll402-balance") or 0)} if charged is not None else None
         pr = r.headers.get("payment-response") or r.headers.get("x-payment-response")
         if pr:
             try:
@@ -97,7 +101,7 @@ class Toll402:
         except Exception:
             body = {"raw": r.text}
         if r.status == 402:
-            raise Toll402Error(body.get("message", "Payment required: pass wallet_key with USDC on Base, or your free-trial quota is exhausted"), 402, "payment_required", body.get("price"), body)
+            raise Toll402Error(body.get("message", "Payment required: pass wallet_key (USDC on Base, x402) or api_key (prepaid credits from https://toll402.dev/credits)"), 402, "payment_required", body.get("price"), body)
         if r.status >= 400 or body.get("ok") is False:
             raise Toll402Error(body.get("message", f"HTTP {r.status}"), r.status, body.get("error", "error"), details=body)
         return body.get("result")
@@ -155,8 +159,10 @@ class Toll402:
     def _resolve(self, tool: str) -> str:
         if tool.startswith("/"):
             return tool
-        if tool.startswith("t/") or tool.startswith("x/"):
+        if tool.startswith(("t/", "x/", "p/")):
             return f"/v1/{tool}"
+        if re.match(r"^[a-z0-9-]+\.[a-z0-9._-]+$", tool, re.I):  # provider endpoint id, e.g. moz.web.url.metrics
+            return f"/v1/p/{tool}"
         for t in self.catalog().get("tools", []):
             if t.get("name") == tool or t.get("id") == tool:
                 return t["path"]

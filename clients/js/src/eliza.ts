@@ -23,5 +23,5 @@ export async function toll402Plugin(client: Toll402, opts: { perTool?: boolean; 
     wrap("TOLL402_DO", "Route any external-fact need (web page, PDF, provenance, business lookup/verification, ID validation, FX) to the right Toll402 pay-per-call tool.", (m, o) => client.do(String(o?.need ?? m.text ?? ""), (o?.input as Record<string, unknown>) ?? m.input ?? {})),
   ];
   if (opts.perTool) for (const t of tools) actions.push(wrap(`TOLL402_${t.name.toUpperCase().replace(/[^A-Z0-9_]/g, "_")}`, `${t.description} (${t.price} per call)`, (m, o) => client.call(t.name, (o?.input as Record<string, unknown>) ?? m.input ?? {})));
-  return { name: "toll402", description: "Pay-per-call tools for agents via x402 (Toll402)", actions, evaluators: [], providers: [] };
+  return { name: "toll402", description: "Pay-per-call tools for agents (Toll402): x402 wallet or prepaid credits", actions, evaluators: [], providers: [] };
 }

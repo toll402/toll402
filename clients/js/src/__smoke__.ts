@@ -1,7 +1,7 @@
 import { Toll402 } from "./index.js";
-const t = new Toll402({ baseUrl: process.env.TOLL402_URL ?? "https://toll402.dev" }); // no wallet → free trial
+const t = new Toll402({ baseUrl: process.env.TOLL402_URL ?? "https://toll402.dev", apiKey: process.env.TOLL402_API_KEY }); // free endpoints work without a key
 const cat = await t.catalog();
-console.log("catalog:", cat.service, cat.counts, "freeTrial:", cat.freeTrial?.callsPerIpPerDay);
+console.log("catalog:", cat.service, cat.counts, "credits:", cat.credits?.enabled);
 const f = await t.find("convert usd to mxn");
 console.log("find:", f.matches.slice(0, 3).map((m) => `${m.name} ${m.price}`).join(" | "));
 const fx = await t.call<{ rate: number; converted: number }>("fx_rate", { base: "USD", quote: "MXN", amount: 10 });

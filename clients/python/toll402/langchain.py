@@ -39,7 +39,7 @@ def toll402_tools(client: Toll402, kinds: list[str] | None = None, max_price_usd
             StructuredTool.from_function(
                 func=_run,
                 name=t["name"][:64],
-                description=f"{t['description']} (Toll402 {t['kind']} tool, {t['price']} per call, paid automatically in USDC via x402)",
+                description=f"{t['description']} (Toll402 {t['kind']} tool, {t['price']} per call, paid automatically: from your wallet via x402 or from prepaid credits (API key))",
                 args_schema=_pydantic_model(t["name"], t["inputSchema"]),
             )
         )

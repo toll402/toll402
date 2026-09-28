@@ -23,7 +23,7 @@ export async function toll402AiTools(client: Toll402, opts: Toll402AiToolsOption
     if (opts.include && !opts.include(t)) continue;
     const name = t.name.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 64);
     out[name] = tool({
-      description: `${t.description} (Toll402 ${t.kind} tool, ${t.price} per call, paid automatically in USDC via x402)`,
+      description: `${t.description} (Toll402 ${t.kind} tool, ${t.price} per call, paid automatically: from your wallet via x402 or from prepaid credits (API key))`,
       parameters: jsonSchema<Record<string, unknown>>(t.inputSchema as never),
       execute: async (input: Record<string, unknown>) => client.call(t.path, input),
     });

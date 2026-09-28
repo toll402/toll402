@@ -1,6 +1,6 @@
 # Toll402 clients
 
-Use Toll402 (https://toll402.dev) from any agent stack in one line. All clients work **without a wallet** (free trial: 25 calls/day/IP on cheap tools) and pay automatically with one (USDC on Base via x402). Charged only on 2xx.
+Use Toll402 (https://toll402.dev) from any agent stack in one line. All clients pay automatically per call, either from the agent's wallet (USDC on Base via x402) or from prepaid credits bought by card (API key `tk_…`, header `x-toll402-key`). Charged only on 2xx.
 
 | Client | Install | Adapters |
 |---|---|---|

@@ -1,8 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "dev.toll402/toll402-mcp",
-  "description": "x402 pay-per-call tools for agents: web, PDF, provenance, 4M-business directory, paid listings.",
-  "version": "0.3.5",
+  "description": "Pay-per-call tools for agents: 2,600+ endpoints, verified business directory; x402 or card credits.",
+  "version": "0.4.1",
   "websiteUrl": "https://toll402.dev",
   "repository": {
     "url": "https://github.com/toll402/toll402",
@@ -12,7 +12,7 @@
     {
       "registryType": "npm",
       "identifier": "toll402-mcp",
-      "version": "0.3.5",
+      "version": "0.4.1",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
@@ -20,7 +20,13 @@
       "environmentVariables": [
         {
           "name": "TOLL402_WALLET_KEY",
-          "description": "0x private key of a wallet holding USDC on Base (pays per call). Omit to use the free trial.",
+          "description": "0x private key of a wallet holding USDC on Base (pays per call via x402). Use this or TOLL402_API_KEY.",
+          "isSecret": true,
+          "isRequired": false
+        },
+        {
+          "name": "TOLL402_API_KEY",
+          "description": "Prepaid-credits key (tk_\u2026) bought by card at https://toll402.dev/credits. Use this or TOLL402_WALLET_KEY.",
           "isSecret": true,
           "isRequired": false
         },

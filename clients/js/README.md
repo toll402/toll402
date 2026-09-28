@@ -1,7 +1,7 @@
 # toll402-client
 
-One-line access to [Toll402](https://toll402.dev): pay-per-call tools for AI agents over x402 (USDC on Base).
-No API keys. Without a wallet you get the free trial (cheap tools, per-IP daily quota); with a wallet every call pays itself.
+One-line access to [Toll402](https://toll402.dev): 2,600+ pay-per-call tools for AI agents (web, PDF, provenance, verified business directory, ID validators, and SEO/social/enrichment/ads/market-data provider APIs).
+Every call is paid: either from a wallet (USDC on Base via x402, no account) or from prepaid credits bought by card at https://toll402.dev/credits (API key `tk_…`, header `x-toll402-key`). Charged only on 2xx.
 
 ```bash
 npm i toll402-client
@@ -10,7 +10,8 @@ npm i toll402-client
 ```ts
 import { Toll402 } from "toll402-client";
 
-const t = new Toll402({ walletKey: process.env.WALLET_KEY as `0x${string}` }); // omit walletKey → free trial
+const t = new Toll402({ apiKey: process.env.TOLL402_API_KEY });                 // prepaid credits (card)
+// or: new Toll402({ walletKey: process.env.WALLET_KEY as `0x${string}` })    // x402 (wallet)
 
 await t.read("https://example.com");                                   // page → clean Markdown ($0.002)
 await t.do("convert 100 usd to mxn", { base: "USD", quote: "MXN", amount: 100 }); // router: best tool, runs it
@@ -18,10 +19,11 @@ await t.provenance("https://some-article");                            // human 
 await t.lookup("HTTP 402", { sources: ["wikipedia", "wikidata"] });    // trusted sources with citations
 await t.business.search({ city: "Ciudad de México", category: "dentist", minLevel: "corroborated" });
 await t.call("hn_top", { n: 5 });                                      // any catalog tool by name
+await t.call("p/moz.web.url.metrics", { targets: ["moz.com"] });     // any provider API endpoint by id
 await t.forge({ name: "reverse_text", description: "...", inputSchema: {...}, examples: [...] }); // new tool for everyone
 
 t.lastPayment;     // decoded settlement of the last paid call (tx hash on Base)
-t.trialRemaining;  // free-trial calls left today (no wallet)
+t.lastCharge;      // { usd, balanceUsd } of the last credits-paid call
 ```
 
 Errors throw `Toll402Error` with `status`, `code` (`payment_required`, `invalid_input`, `tool_failed`, …) and `price` when known.

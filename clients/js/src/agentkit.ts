@@ -16,7 +16,7 @@ export async function toll402ActionProviders(customActionProvider: CustomActionP
   return tools.map((t) =>
     customActionProvider({
       name: `toll402_${t.name.replace(/[^a-zA-Z0-9_]/g, "_")}`,
-      description: `${t.description} (Toll402, ${t.price} per call via x402)`,
+      description: `${t.description} (Toll402, ${t.price} per call; x402 wallet or prepaid credits)`,
       schema: jsonSchemaToZod((t.inputSchema as Record<string, unknown>) ?? { type: "object", properties: {} }),
       invoke: async (_wallet, args) => JSON.stringify(await client.call(t.name, args)),
     }),

@@ -23,7 +23,7 @@ def toll402_crewai_tools(client: Toll402, kinds: list[str] | None = None, max_pr
 
         class _Tool(BaseTool):  # type: ignore[misc,valid-type]
             name: str = t["name"][:64]
-            description: str = f"{t['description']} (Toll402 {t['kind']} tool, {t['price']} per call, paid automatically in USDC via x402)"
+            description: str = f"{t['description']} (Toll402 {t['kind']} tool, {t['price']} per call, paid automatically: from your wallet via x402 or from prepaid credits (API key))"
             args_schema: type = model
 
             def _run(self, **kwargs: Any) -> str:

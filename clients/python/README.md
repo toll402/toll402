@@ -1,17 +1,18 @@
 # toll402 (Python)
 
-One-line access to [Toll402](https://toll402.dev): pay-per-call tools for AI agents over x402 (USDC on Base).
-No API keys. Without a wallet you get the free trial (cheap tools, per-IP daily quota); with one, every call pays itself.
+One-line access to [Toll402](https://toll402.dev): 2,600+ pay-per-call tools for AI agents (web, PDF, provenance, verified business directory, ID validators, and SEO/social/enrichment/ads/market-data provider APIs).
+Every call is paid: either from a wallet (USDC on Base via x402, no account) or from prepaid credits bought by card at https://toll402.dev/credits (API key `tk_…`, header `x-toll402-key`). Charged only on 2xx.
 
 ```bash
-pip install toll402            # free trial / discovery
+pip install toll402            # discovery + credits (API key)
 pip install "toll402[pay]"     # + x402 payments (x402[requests,evm], eth-account)
 ```
 
 ```python
 from toll402 import Toll402
 
-t = Toll402(wallet_key=os.environ.get("WALLET_KEY"))     # omit → free trial
+t = Toll402(api_key=os.environ.get("TOLL402_API_KEY"))    # prepaid credits (card)
+# or: Toll402(wallet_key=os.environ.get("WALLET_KEY"))      # x402 (wallet)
 
 t.read("https://example.com")                                   # page → Markdown ($0.002)
 t.do("convert 100 usd to mxn", {"base": "USD", "quote": "MXN", "amount": 100})
@@ -20,7 +21,7 @@ t.lookup("HTTP 402", sources=["wikipedia", "wikidata"])         # trusted source
 t.business.search(city="Ciudad de México", category="dentist", minLevel="corroborated")
 t.call("hn_top", {"n": 5})                                      # any catalog tool by name
 t.last_payment      # settlement of the last paid call (tx hash on Base)
-t.trial_remaining   # free-trial calls left today
+t.last_charge       # {'usd', 'balance_usd'} of the last credits-paid call
 ```
 
 Errors raise `Toll402Error` with `.status`, `.code` (`payment_required`, `invalid_input`, `tool_failed`, …) and `.price`. Charged only on 2xx.
