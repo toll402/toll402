@@ -1,0 +1,10 @@
+{
+  "name": "toll402",
+  "version": "1.0.0",
+  "description": "Toll402 tools and data APIs for Claude Code, charged per call to your prepaid credits. Connect with OAuth and set a daily limit.",
+  "author": { "name": "Toll402", "email": "hello@toll402.dev", "url": "https://toll402.dev" },
+  "homepage": "https://toll402.dev/docs#connect",
+  "repository": "https://github.com/toll402/toll402",
+  "license": "MIT",
+  "keywords": ["tools", "api", "seo", "enrichment", "mcp"]
+}

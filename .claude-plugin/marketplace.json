@@ -1,0 +1,16 @@
+{
+  "name": "toll402",
+  "owner": { "name": "Toll402", "email": "hello@toll402.dev", "url": "https://toll402.dev" },
+  "metadata": { "description": "Pay-per-call tools and data APIs for Claude Code: web pages, SEO, social data, enrichment, business verification, market data, image and video generation." },
+  "plugins": [
+    {
+      "name": "toll402",
+      "source": "./plugins/toll402",
+      "description": "Connect Claude Code to Toll402: 2,600+ tools and data APIs charged per call to your prepaid credits (OAuth, daily limit), plus a skill that tells Claude when to use them.",
+      "version": "1.0.0",
+      "category": "productivity",
+      "homepage": "https://toll402.dev",
+      "keywords": ["tools", "seo", "enrichment", "scraping", "image-generation", "video-generation", "mcp"]
+    }
+  ]
+}

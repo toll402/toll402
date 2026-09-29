@@ -1,0 +1,7 @@
+{
+  "name": "toll402",
+  "version": "1.0.0",
+  "description": "Pay-per-call tools and data APIs for Gemini CLI: web pages, SEO, social data, enrichment, business verification, market data, image and video generation.",
+  "mcpServers": { "toll402": { "httpUrl": "https://toll402.dev/connector/mcp" } },
+  "contextFileName": "GEMINI.md"
+}
